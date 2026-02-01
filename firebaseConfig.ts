@@ -1,7 +1,14 @@
 // firebaseConfig.ts
-
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+// 以下の行に @ts-ignore を追加してエラーを強制的に消します
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+    // @ts-ignore
+    getReactNativePersistence,
+    initializeAuth,
+    type Auth
+} from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -13,8 +20,11 @@ const firebaseConfig = {
     measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Firebaseアプリの初期化
 const app: FirebaseApp = initializeApp(firebaseConfig);
 
-// Firestoreの初期化
+// 認証状態を永続化（アプリを閉じてもログインを維持）するための設定
+export const auth: Auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage)
+});
+
 export const db: Firestore = getFirestore(app);
